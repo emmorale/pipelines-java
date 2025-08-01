@@ -10,13 +10,10 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: Maven@3
+- task: KubernetesManifest@1
   inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+    action: 'deploy'
+    connectionType: 'kubernetesServiceConnection'
+    kubernetesServiceConnection: 'ocparo'
+    namespace: 'demo'
+    manifests: 'apiVersion: apps/v1 kind: Deployment metadata:   name: hello-openshift-deployment   labels:     app: hello-openshift spec:   replicas: 1   selector:     matchLabels:       app: hello-openshift   template:     metadata:       labels:         app: hello-openshift     spec:       containers:       - name: web         image: nginx:1.25         ports:         - containerPort: 80'
